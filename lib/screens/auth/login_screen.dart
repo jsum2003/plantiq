@@ -1,6 +1,6 @@
-// lib/screens/auth/login_screen.dart
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'register_screen.dart';
 import 'package:plantiq/main.dart';
 
@@ -15,25 +15,64 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()){
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final url = Uri.parse('http://127.0.0.1:8000/api/token/');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": _emailController.text.trim(),
+          "password": _passwordController.text.trim(),
+        }),
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      print("📡 Status code: ${response.statusCode}");
+      print("📄 Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print('✅ ACCESS TOKEN: ${data['access']}');
+        print('✅ REFRESH TOKEN: ${data['refresh']}');
+        // Aquí puedes navegar a la siguiente pantalla
+      } else {
+        setState(() {
+          _errorMessage = "Correo o contraseña incorrectos";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = "Error de conexión con el servidor";
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1C1F2A),
+      backgroundColor: const Color(0xFF1C1F2A),
       body: SafeArea(
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Color(0xFF2B2F3A),
+                color: const Color(0xFF2B2F3A),
                 borderRadius: BorderRadius.circular(20),
               ),
               width: 600,
@@ -45,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
-                        context, 
+                        context,
                         MaterialPageRoute(builder: (context) => const PaginaInicio()),
                       );
                     },
@@ -54,9 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 400,
                     ),
                   ),
-                  
                   const SizedBox(height: 25),
-
                   const Text(
                     'Inicio de sesión',
                     style: TextStyle(
@@ -65,31 +102,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 25),
-
                   Form(
                     key: _formKey,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        //email
                         TextFormField(
                           controller: _emailController,
                           style: const TextStyle(color: Color(0xFFE3E3E3)),
                           decoration: InputDecoration(
-                            labelText: 'Correo electronico',
+                            labelText: 'Correo electrónico',
                             labelStyle: const TextStyle(color: Color(0xFFE3E3E3)),
                             filled: true,
-                            fillColor: Color(0xFF1C1F2A),
-                            prefixIcon: Icon(Icons.email, color: Color(0xFFE3E3E3),),
-                            enabledBorder: OutlineInputBorder(
+                            fillColor: const Color(0xFF1C1F2A),
+                            prefixIcon: const Icon(Icons.email, color: Color(0xFFE3E3E3)),
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:  BorderSide.none,
-                              borderRadius: BorderRadius.circular(5)
                             ),
                           ),
                           validator: (value) {
@@ -103,7 +132,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         const SizedBox(height: 30),
-                        //password
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true,
@@ -112,103 +140,72 @@ class _LoginScreenState extends State<LoginScreen> {
                             labelText: 'Contraseña',
                             labelStyle: const TextStyle(color: Color(0xFFE3E3E3)),
                             filled: true,
-                            fillColor: Color(0xFF1C1F2A),
-                            prefixIcon: Icon(Icons.password, color:Color(0xFFE3E3E3)),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
+                            fillColor: const Color(0xFF1C1F2A),
+                            prefixIcon: const Icon(Icons.lock, color: Color(0xFFE3E3E3)),
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               borderSide: BorderSide.none,
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty ) {
+                            if (value == null || value.isEmpty) {
                               return 'Por favor ingresa tu contraseña';
                             }
                             if (value.length < 6) {
-                              return 'Minimo 6 caracteres';
+                              return 'Mínimo 6 caracteres';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 40),
-                        //boton 
+                        const SizedBox(height: 20),
+                        if (_errorMessage != null)
+                          Text(
+                            _errorMessage!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        const SizedBox(height: 20),
                         Center(
                           child: GestureDetector(
-                            onTap: _submitForm,
+                            onTap: _isLoading ? null : _submitForm,
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 8),
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFDA00FF), Color(0xFF7E0FF5),Color(0xFFDA00FF)],
+                                  colors: [Color(0xFFDA00FF), Color(0xFF7E0FF5), Color(0xFFDA00FF)],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Text(
-                                'Iniciar sesión',
-                                style: TextStyle(
-                                  color: Color(0xFFE3E3E3),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  : const Text(
+                                      'Iniciar sesión',
+                                      style: TextStyle(
+                                        color: Color(0xFFE3E3E3),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
-                        //enlace
-                        Center(
-                          child: RichText(
-                            text: TextSpan(
-                              style: const TextStyle(
-                                color: Color(0xFFE3E3E3),
-                                fontSize: 16,
-                              ),
-                              children: [
-                                const TextSpan(
-                                  text: 'Si no te has inscrito registrate '
-                                ),
-                                WidgetSpan(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const RegisterScreen(),
-                                        ),
-                                      );
-                                    },
-                                    child: ShaderMask(
-                                      shaderCallback:(bounds)=> const LinearGradient(
-                                        colors: [
-                                          Color(0xFFDA00FF), 
-                                          Color(0xFF7E0FF5),
-                                          Color(0xFFDA00FF),
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ).createShader(bounds),
-                                      child: Text(
-                                        'aquí.',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    )
-                                  )
-                                )
-                              ]
-                            ),
+                        const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                            );
+                          },
+                          child: const Text(
+                            '¿No tienes cuenta? Regístrate aquí',
+                            style: TextStyle(color: Color(0xFFE3E3E3)),
                           ),
-                        )
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
