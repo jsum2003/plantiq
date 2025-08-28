@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'register_screen.dart';
 import 'package:plantiq/main.dart';
+import '../dashboard/dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,8 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()){
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+    
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DashboardScreen(),
+        ),
+      );
     }
   }
 
