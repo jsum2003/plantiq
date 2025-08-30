@@ -87,7 +87,7 @@ class ProfileTab extends StatelessWidget {
 
                 // Sección de mapa
                 Expanded(
-                  flex: 1, // mismo tamaño que la sección de información
+                  flex: 1,
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     width: double.infinity,
@@ -95,85 +95,92 @@ class ProfileTab extends StatelessWidget {
                       color: const Color(0xFF2B2F3A),
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Ubicación de la finca o predio',
-                          style: TextStyle(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Ubicación de la finca o predio',
+                            style: TextStyle(
                               color: Color(0xFFE3E3E3),
                               fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 15),
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              image: const DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                  '', // Aquí va la URL de tu mapa o imagen
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Image.asset(
+                                  'assets/icon/app_logo.png',
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 270,
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          // Puedes añadir más widgets aquí si quieres que sean scrolleables
+                        ],
+                      ),
                     ),
                   ),
                 ),
+
               ],
             ),
           ),
 
-          const SizedBox(width: 20),
+          const SizedBox(width: 60),
 
-          // Columna lateral (derecha)
-          Expanded(
-            flex: 2,
-            child: Container(
-              padding: const EdgeInsets.all(40),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2B2F3A),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Avatar
-                    const CircleAvatar(
-                      radius: 120,
-                      backgroundColor: Color(0xFFE3E3E3),
-                      child: Icon(Icons.person, size: 150, color: Colors.black),
-                    ),
-                    const SizedBox(height: 70),
-                    const Text('Nombres', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
-                    const Text('Daniel Samir', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    const Text('Apellidos', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
-                    const Text('Gonzáles Pérez', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    const Text('Teléfono de contacto', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
-                    const Text('0180004455', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    const Text('Correo Electrónico', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
-                    Text(
-                      'GonzalesPerezSamir@gmail.com',
-                      style: const TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-                    const Text('Rol', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
-                    const Text('Administrador', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    const Text('Dirección', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
-                    const Text('Calle 22 sur # 56-27', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
-                  ],
+          Center(
+            child: Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.all(70),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2B2F3A),
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              )
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Avatar
+                      CircleAvatar(
+                        radius: 120,
+                        backgroundColor: Color(0xFF1C1F2A),
+                        backgroundImage: AssetImage('assets/icon/app_logo.png'),
+                      ),
+                      const SizedBox(height: 70),
+                      const Text('Nombres', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
+                      const Text('Daniel Samir', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 10),
+                      const Text('Apellidos', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
+                      const Text('Gonzáles Pérez', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 10),
+                      const Text('Teléfono de contacto', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
+                      const Text('0180004455', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 10),
+                      const Text('Correo Electrónico', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
+                      Text(
+                        'GonzalesPerezSamir@gmail.com',
+                        style: const TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      const Text('Dirección', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15)),
+                      const Text('Calle 22 sur # 56-27', style: TextStyle(color: Color(0xFFE3E3E3), fontSize: 15, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                )
+              ),
             ),
-          ),
+          ),// Columna lateral (derecha)
+          const SizedBox(width: 20)
         ],
       ),
     );

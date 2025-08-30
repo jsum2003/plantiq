@@ -4,6 +4,64 @@ import 'package:http/http.dart' as http;
 import 'package:plantiq/main.dart';
 import './login_screen.dart';
 
+// Widget para botón con hover simple (reduce opacidad)
+class SimpleHoverButton extends StatefulWidget {
+  final VoidCallback onTap;
+  final Widget child;
+  const SimpleHoverButton({required this.onTap, required this.child, Key? key}) : super(key: key);
+  @override
+  _SimpleHoverButtonState createState() => _SimpleHoverButtonState();
+}
+
+class _SimpleHoverButtonState extends State<SimpleHoverButton> {
+  bool _isHovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 150),
+          opacity: _isHovered ? 0.7 : 1.0,
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+// Widget para enlace con hover simple (reduce opacidad)
+class SimpleHoverLink extends StatefulWidget {
+  final VoidCallback onTap;
+  final Widget child;
+  const SimpleHoverLink({required this.onTap, required this.child, Key? key}) : super(key: key);
+  @override
+  _SimpleHoverLinkState createState() => _SimpleHoverLinkState();
+}
+
+class _SimpleHoverLinkState extends State<SimpleHoverLink> {
+  bool _isHovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 150),
+          opacity: _isHovered ? 0.7 : 1.0,
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -48,7 +106,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     if (response.statusCode == 201) {
-      // Registro exitoso
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -73,17 +130,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: const Color(0xFF1C1F2A),
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF2B2F3A),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              width: 600,
-              height: 1500,
-              padding: const EdgeInsets.all(40),
-              child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2B2F3A),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                width: 600,
+                padding: const EdgeInsets.all(40),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -182,10 +238,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           const SizedBox(height: 40),
-                          // botón
+                          // botón con hover solo opacidad
                           Center(
-                            child: GestureDetector(
-                              onTap: _isLoading ? null : _submitForm,
+                            child: SimpleHoverButton(
+                              onTap: _isLoading ? () {} : _submitForm,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 8),
                                 decoration: BoxDecoration(
@@ -214,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          // enlace
+                          // enlace con hover solo opacidad sin cambiar color
                           Center(
                             child: RichText(
                               text: TextSpan(
@@ -223,35 +279,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   fontSize: 16,
                                 ),
                                 children: [
-                                  const TextSpan(
-                                      text: 'Si ya te has inscrito inicia sesión '),
+                                  const TextSpan(text: 'Inicio de sesión '),
                                   WidgetSpan(
-                                    child: GestureDetector(
+                                    child: SimpleHoverLink(
                                       onTap: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => const LoginScreen()),
+                                            builder: (context) => const LoginScreen(),
+                                          ),
                                         );
                                       },
-                                      child: ShaderMask(
-                                        shaderCallback: (bounds) =>
-                                            const LinearGradient(
-                                          colors: [
-                                            Color(0xFFDA00FF),
-                                            Color(0xFF7E0FF5),
-                                            Color(0xFFDA00FF),
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ).createShader(bounds),
-                                        child: const Text(
-                                          'aquí.',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                                      child: const Text(
+                                        'aquí.',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFFDA00FF),
                                         ),
                                       ),
                                     ),

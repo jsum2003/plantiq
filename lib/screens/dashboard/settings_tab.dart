@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../auth/mail_reser.dart';
 
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
@@ -76,19 +77,37 @@ class _SettingsTabState extends State<SettingsTab> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ElevatedButton(
+                        style: 
+                        ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(const Color(0xFF1C1F2A)),
+                          fixedSize: MaterialStateProperty.all(Size(200, 30)),
+                        ),
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.push(context,
+                            MaterialPageRoute(
+                              builder: (context) => const MailResetScreen()
+                            )
+                          );
                           // Navegación o formulario para cambiar contraseña
                         },
-                        child: const Text('Cambiar Contraseña'),
+                        child: const Text(
+                          'Cambiar Contraseña',
+                          style: TextStyle(color: Color(0xFFE3E3E3)),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(const Color(0xFF1C1F2A)),
+                          fixedSize: MaterialStateProperty.all(Size(200, 30)),
+                        ),
                         onPressed: () {
                           Navigator.pop(context);
-                          // Lógica para cerrar sesión
                         },
-                        child: const Text('Cerrar Sesión'),
+                        child: const Text(
+                          'Cerrar Sesión', 
+                          style: TextStyle(color: Color.fromARGB(255, 191, 37, 37)),
+                        ),
                       ),
                     ],
                   ),
